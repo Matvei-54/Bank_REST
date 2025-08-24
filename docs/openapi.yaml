@@ -1,1 +1,707 @@
-# Здесь будет OpenAPI описание всех доступных эндпоинтов и моделей данных.
+# OpenAPI описание всех доступных эндпоинтов и моделей данных.
+
+openapi: 3.0.3
+info:
+  title: Card Management API
+  description: API for managing cards, transactions, and customer accounts
+  version: 1.0.0
+servers:
+  - url: /api
+    description: Main API server
+tags:
+  - name: admin
+    description: Operations available to admin users
+  - name: auth
+    description: Authentication operations
+  - name: get
+    description: Operations for retrieving card and transaction data
+  - name: post
+    description: Operations for creating resources
+  - name: put
+    description: Operations for updating resources
+  - name: delete
+    description: Operations for deleting resources
+  - name: sign up
+    description: Operations for customer registration
+paths:
+  /admin/cards/create:
+    post:
+      summary: Создать карту
+      description: Создает новую карту для пользователя. Доступно только для роли ADMIN.
+      tags:
+        - admin
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCardRequest'
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        '200':
+          description: Карта успешно создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardResponse'
+        '400':
+          description: Некорректный запрос
+        '401':
+          description: Неавторизован
+        '403':
+          description: Доступ запрещен
+  /admin/cards/update:
+    put:
+      summary: Изменение номера и срока действия карты
+      description: Обновляет данные карты. Доступно только для роли ADMIN.
+      tags:
+        - admin
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCardRequest'
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        '200':
+          description: Карта успешно обновлена
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardResponse'
+        '400':
+          description: Некорректный запрос
+        '401':
+          description: Неавторизован
+        '403':
+          description: Доступ запрещен
+  /admin/cards/delete:
+    delete:
+      summary: Удаление карты
+      description: Удаляет карту по номеру. Доступно для ролей USER и ADMIN.
+      tags:
+        - delete
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteCardRequest'
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        '200':
+          description: Карта успешно удалена
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Некорректный запрос
+        '401':
+          description: Неавторизован
+        '403':
+          description: Доступ запрещен
+  /admin/cards/activate:
+    post:
+      summary: Активировать карту
+      description: Активирует карту по номеру. Доступно только для роли ADMIN.
+      tags:
+        - admin
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivateCardRequest'
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        '200':
+          description: Карта успешно активирована
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Некорректный запрос
+        '401':
+          description: Неавторизован
+        '403':
+          description: Доступ запрещен
+  /admin/cards/blocked:
+    post:
+      summary: Заблокировать карту
+      description: Блокирует карту по номеру. Доступно только для роли ADMIN.
+      tags:
+        - admin
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlockCardRequest'
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        '200':
+          description: Карта успешно заблокирована
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Некорректный запрос
+        '401':
+          description: Неавторизован
+        '403':
+          description: Доступ запрещен
+  /auth/login:
+    post:
+      summary: Залогиниться пользователю
+      description: Аутентификация пользователя с возвратом JWT токена.
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthRequest'
+      responses:
+        '200':
+          description: Успешная аутентификация
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Некорректный запрос
+        '401':
+          description: Неверные учетные данные
+  /cards/get/{cardNumber}:
+    get:
+      summary: Получить данные карты
+      description: Возвращает данные карты по номеру. Доступно для ролей USER и ADMIN.
+      tags:
+        - get
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: cardNumber
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Данные карты успешно получены
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardResponse'
+        '400':
+          description: Некорректный запрос
+        '401':
+          description: Неавторизован
+        '403':
+          description: Доступ запрещен
+  /cards:
+    get:
+      summary: Получить список карт
+      description: Возвращает список карт пользователя с учетом статуса и пагинации. Доступно для ролей USER и ADMIN.
+      tags:
+        - get
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [ACTIVE, BLOCKED, INACTIVE]
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Список карт успешно получен
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CardResponse'
+                  pageable:
+                    $ref: '#/components/schemas/Pageable'
+                  totalElements:
+                    type: integer
+                  totalPages:
+                    type: integer
+        '400':
+          description: Некорректный запрос
+        '401':
+          description: Неавторизован
+        '403':
+          description: Доступ запрещен
+  /cards/transfer:
+    post:
+      summary: Выполнить перевод между своими картами
+      description: Выполняет перевод средств между картами пользователя. Доступно для ролей USER и ADMIN.
+      tags:
+        - post
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferFundsBetweenUserCardsRequest'
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        '200':
+          description: Перевод успешно выполнен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        '400':
+          description: Некорректный запрос
+        '401':
+          description: Неавторизован
+        '403':
+          description: Доступ запрещен
+  /cards/withdraw:
+    post:
+      summary: Выполнить вывод средств с карты
+      description: Выполняет вывод средств с карты. Доступно для ролей USER и ADMIN.
+      tags:
+        - post
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WithdrawFundsRequest'
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        '200':
+          description: Вывод средств успешно выполнен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        '400':
+          description: Некорректный запрос
+        '401':
+          description: Неавторизован
+        '403':
+          description: Доступ запрещен
+  /cards/transactions:
+    get:
+      summary: Получить список транзакций по карте
+      description: Возвращает список транзакций по карте с пагинацией. Доступно для ролей USER и ADMIN.
+      tags:
+        - get
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: cardNumber
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        '200':
+          description: Список транзакций успешно получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionResponse'
+        '400':
+          description: Некорректный запрос
+        '401':
+          description: Неавторизован
+        '403':
+          description: Доступ запрещен
+  /cards/block:
+    put:
+      summary: Заблокировать карту
+      description: Блокирует карту пользователя. Доступно для ролей USER и ADMIN.
+      tags:
+        - put
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlockCardRequest'
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        '200':
+          description: Карта успешно заблокирована
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Некорректный запрос
+        '401':
+          description: Неавторизован
+        '403':
+          description: Доступ запрещен
+  /cards/replenishment:
+    put:
+      summary: Пополнить баланс карты
+      description: Пополняет баланс карты. Доступно для ролей USER и ADMIN.
+      tags:
+        - put
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReplenishmentCardRequest'
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        '200':
+          description: Баланс карты успешно пополнен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        '400':
+          description: Некорректный запрос
+        '401':
+          description: Неавторизован
+        '403':
+          description: Доступ запрещен
+  /customer/registration:
+    post:
+      summary: Зарегистрировать нового пользователя
+      description: Регистрирует нового пользователя в системе.
+      tags:
+        - sign up
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerRegistrationRequest'
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        '200':
+          description: Пользователь успешно зарегистрирован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerRegistrationResponse'
+        '400':
+          description: Некорректный запрос
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    CreateCardRequest:
+      type: object
+      properties:
+        cardNumber:
+          type: string
+        expiryDate:
+          type: string
+          format: date
+        customerId:
+          type: integer
+          format: int64
+      required:
+        - cardNumber
+        - expiryDate
+        - customerId
+    UpdateCardRequest:
+      type: object
+      properties:
+        cardNumber:
+          type: string
+        newCardNumber:
+          type: string
+        newExpiryDate:
+          type: string
+          format: date
+      required:
+        - cardNumber
+        - newCardNumber
+        - newExpiryDate
+    DeleteCardRequest:
+      type: object
+      properties:
+        cardNumber:
+          type: string
+      required:
+        - cardNumber
+    ActivateCardRequest:
+      type: object
+      properties:
+        cardNumber:
+          type: string
+      required:
+        - cardNumber
+    BlockCardRequest:
+      type: object
+      properties:
+        cardNumber:
+          type: string
+      required:
+        - cardNumber
+    AuthRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required:
+        - email
+        - password
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+      required:
+        - token
+    CardResponse:
+      type: object
+      properties:
+        cardNumber:
+          type: string
+        balance:
+          type: number
+          format: double
+        status:
+          type: string
+          enum: [ACTIVE, BLOCKED, INACTIVE]
+        expiryDate:
+          type: string
+          format: date
+      required:
+        - cardNumber
+        - balance
+        - status
+        - expiryDate
+    TransferFundsBetweenUserCardsRequest:
+      type: object
+      properties:
+        sourceCardNumber:
+          type: string
+        targetCardNumber:
+          type: string
+        amount:
+          type: number
+          format: double
+      required:
+        - sourceCardNumber
+        - targetCardNumber
+        - amount
+    WithdrawFundsRequest:
+      type: object
+      properties:
+        cardNumber:
+          type: string
+        amount:
+          type: number
+          format: double
+      required:
+        - cardNumber
+        - amount
+    ShowTransactionalByCardRequest:
+      type: object
+      properties:
+        cardNumber:
+          type: string
+      required:
+        - cardNumber
+    TransactionResponse:
+      type: object
+      properties:
+        transactionId:
+          type: integer
+          format: int64
+        amount:
+          type: number
+          format: double
+        transactionType:
+          type: string
+          enum: [CREDIT, DEBIT]
+        transactionStatus:
+          type: string
+          enum: [SUCCESS, FAILED, PENDING]
+        currency:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - transactionId
+        - amount
+        - transactionType
+        - transactionStatus
+        - currency
+        - createdAt
+    CustomerRegistrationRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+      required:
+        - email
+        - password
+        - firstName
+        - lastName
+    CustomerRegistrationResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        email:
+          type: string
+          format: email
+        firstName:
+          type: string
+        lastName:
+          type: string
+      required:
+        - id
+        - email
+        - firstName
+        - lastName
+    Pageable:
+      type: object
+      properties:
+        page:
+          type: integer
+        size:
+          type: integer
+        sort:
+          type: array
+          items:
+            type: string
