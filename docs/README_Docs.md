@@ -12,29 +12,35 @@ Authorization: Bearer <your_jwt_token>
 
 Тело запроса (JSON):
 
-{
-    "email": "user@example.com",
-    "password": "securePassword123"
-}
+    {
+        "email": "user@example.com",
+        "password": "securePassword123"
+    }
 
 Ответ:
 
-{
-"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-}
+    {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    }
 
 ---
 
  **Создать новую карту может только админитсратор.**
 POST /admin/cards/create
 
+Учетная записи администратора создается миграцией скриптов БД.
+данные для входа:
+
+    email: admin@syscard.com
+    password: admin-password
+
 Тело запроса (JSON):
 
-{
-"cardNumber": "1234567890123456",
-"expiryDate": "2025-12-31",
-"customerId": 1
-}
+    {
+    "cardNumber": "1234567890123456",
+    "expiryDate": "2025-12-31",
+    "customerId": 3
+    }
 
  **Все входные данные валидируются.**
 
