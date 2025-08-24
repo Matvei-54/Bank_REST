@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="TRANSACTION_ENTITY_INIT_TABLE_AND_SEQUENCE" author="Matvei">
+
+        <createSequence cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="transaction_main_sequence" startValue="1"/>
+
+        <createTable tableName="transaction">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="amount" type="DECIMAL(19,4)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="currency" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="transaction_status" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="transaction_type" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="source_card_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="target_card_id" type="BIGINT"/>
+
+            <column name="created_at" type="DATETIME"/>
+
+            <column name="updated_at" type="DATETIME"/>
+
+            <column name="version" type="INT" defaultValue="0"/>
+        </createTable>
+
+    </changeSet>
+</databaseChangeLog>

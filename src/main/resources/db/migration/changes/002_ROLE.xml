@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="ROLE_ENTITY_INIT_TABLE_AND_SEQUENCE" author="Matvei">
+
+        <createSequence cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="role_main_sequence" startValue="1"/>
+
+        <createTable tableName="role">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="customer_role" baseColumnNames="role_id" constraintName="fk_role_id" referencedTableName="role"
+                                 referencedColumnNames="id"/>
+
+    </changeSet>
+</databaseChangeLog>

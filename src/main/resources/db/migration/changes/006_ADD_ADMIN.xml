@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="ADD_ADMIN" author="Matvei">
+
+        <insert tableName="customer">
+            <column name="id" value="1" />
+            <column name="name" value="admin"/>
+            <column name="email" value="admin@syscard.com"/>
+            <column name="password" value="$argon2id$v=19$m=60000,t=10,p=1$66g1J1Mm4K12FtU+KU1N9A$jle9uxuHyGIcFvwLnwQSPp9VrHuuspeT6b5Ajasfjmc"/>
+            <column name="is_account_non_expired" value="true"/>
+            <column name="is_account_non_locked" value="true"/>
+            <column name="is_credentials_non_expired" value="true"/>
+            <column name="is_enabled" value="true"/>
+        </insert>
+
+        <insert tableName="customer_role">
+            <column name="customer_id" value="1"/>
+            <column name="role_id" value="1" />
+        </insert>
+
+    </changeSet>
+</databaseChangeLog>

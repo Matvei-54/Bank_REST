@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="CUSTOMER_ENTITY_INIT_TABLE_AND_SEQUENCE" author="Matvei">
+
+        <createSequence cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="customer_main_sequence" startValue="3"/>
+
+        <createTable tableName="customer">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="DATETIME"/>
+
+            <column name="updated_at" type="DATETIME"/>
+
+            <column name="version" type="INT" defaultValue="0"/>
+
+            <column name="is_account_non_expired" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="is_account_non_locked" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="is_credentials_non_expired" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="is_enabled" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="customer_role">
+            <column name="customer_id" type="BIGINT">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="role_id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="customer_role" baseColumnNames="customer_id" constraintName="fk_customer_id" referencedTableName="customer"
+                                 referencedColumnNames="id"/>
+
+    </changeSet>
+</databaseChangeLog>
